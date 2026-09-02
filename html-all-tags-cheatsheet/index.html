@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="hi" data-theme="dark" data-track="html">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Full-Stack Web Development Learning Portal: Basic Se Pro Level Tak</title>
+  <meta name="description" content="Complete Web Development Learning Hub: HTML, CSS, JavaScript, Git & GitHub, React & Frontend, Backend & APIs aur Roadmap - sabhi parts alag aur organized from noob to pro.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Sticky Header with Master Track Navigation -->
+  <header>
+    <div class="container">
+      <div class="header-top">
+        <div class="brand">
+          <span class="logo-badge">&lt;/&gt;</span>
+          <h1>Web Dev Mastery Hub</h1>
+        </div>
+        <div class="header-actions">
+          <button class="action-btn" onclick="window.print()" title="Print Current Track Cheatsheet">
+            <span>&#128424;</span> Print / PDF
+          </button>
+          <button id="themeToggleBtn" class="theme-toggle-btn" title="Toggle Theme">
+            <span>&#9728;&#65039;</span> Light Mode
+          </button>
+        </div>
+      </div>
+
+      <!-- Dedicated Technology Navigation Tabs (Strictly Unmixed!) -->
+      <nav class="track-nav" id="trackNav" aria-label="Technology Tracks" role="tablist">
+        <!-- Rendered dynamically via script.js -->
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-badge" id="heroBadge">
+        <span>&#9889;</span> 122 Tags: Basic to Pro
+      </div>
+      <h2 id="heroTitle">HTML5 Tags: <span>Basic Se Lekar Pro Level</span> Tak</h2>
+      <p id="heroDesc">HTML ke sabhi 122 tags ka complete interactive sangrah. Har tag ka Hinglish explanation, code syntax, copy button, aur live interactive preview.</p>
+
+      <!-- Stats Bar -->
+      <div class="stats-strip">
+        <div class="stat-pill">
+          <span class="stat-dot dot-all"></span>
+          <span>Total Topics: <strong id="totalCount">0</strong></span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-dot dot-beginner"></span>
+          <span>Beginner: <strong id="beginnerCount">0</strong></span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-dot dot-intermediate"></span>
+          <span>Intermediate: <strong id="intermediateCount">0</strong></span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-dot dot-pro"></span>
+          <span>Pro Level: <strong id="proCount">0</strong></span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-dot dot-deprecated"></span>
+          <span>Deprecated/Legacy: <strong id="deprecatedCount">0</strong></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content & Filters -->
+  <main class="container">
+    
+    <!-- Controls Bar -->
+    <section class="controls-bar" aria-label="Filters and Search">
+      <!-- Real-time Search -->
+      <div class="search-box-wrapper">
+        <span class="search-icon">&#128269;</span>
+        <input 
+          type="text" 
+          id="searchInput" 
+          class="search-input" 
+          placeholder="Search this track (e.g. 'flexbox', 'promise', 'branch', 'hooks', 'jwt', 'status')..."
+          autocomplete="off"
+        >
+        <span class="search-shortcut" title="Press '/' to search">/</span>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-row">
+        <!-- Level Filter -->
+        <div class="filter-group">
+          <span class="filter-label">Mastery:</span>
+          <div class="filter-buttons" id="levelFilters">
+            <button class="chip-btn active" data-lvl="all">All Levels</button>
+            <button class="chip-btn" data-lvl="beginner">&#128994; Beginner (Noob)</button>
+            <button class="chip-btn" data-lvl="intermediate">&#128993; Intermediate</button>
+            <button class="chip-btn" data-lvl="pro">&#128995; Pro / Advanced</button>
+            <button class="chip-btn" data-lvl="deprecated">&#128308; Deprecated</button>
+          </div>
+        </div>
+
+        <!-- Dynamic Category Filter for Active Track -->
+        <div class="filter-group">
+          <span class="filter-label">Category:</span>
+          <div class="filter-buttons" id="categoryFilters">
+            <!-- Populated dynamically based on active track -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Meta indicator -->
+    <div class="results-meta">
+      <span id="resultsCount">Showing topics...</span>
+      <button id="resetFilters" class="reset-filters-btn">Reset Filters</button>
+    </div>
+
+    <!-- Cards Grid -->
+    <section class="tags-grid" id="tagsGrid" aria-live="polite">
+      <!-- Populated dynamically via script.js -->
+    </section>
+
+  </main>
+
+  <!-- Back to Top Button -->
+  <button id="backToTopBtn" class="back-to-top" title="Back to top" aria-label="Back to top">
+    &#8593;
+  </button>
+
+  <!-- Toast Notification element -->
+  <div id="appToast" class="toast" role="alert" aria-live="assertive"></div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p><strong>Full-Stack Web Development Mastery Hub</strong> &bull; Complete all-in-one learning portal from starting/noob to pro level.</p>
+      <div class="footer-links">
+        <a href="#top" onclick="window.scrollTo({top:0, behavior:'smooth'}); return false;">Scroll to Top</a>
+        <a href="https://developer.mozilla.org/" target="_blank" rel="noopener">MDN Web Docs</a>
+        <a href="https://react.dev/" target="_blank" rel="noopener">React Docs</a>
+        <a href="https://nodejs.org/" target="_blank" rel="noopener">Node.js Docs</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Track Data Files (Unmixed & Modular) -->
+  <script src="data/html-data.js"></script>
+  <script src="data/css-data.js"></script>
+  <script src="data/js-data.js"></script>
+  <script src="data/git-data.js"></script>
+  <script src="data/frontend-data.js"></script>
+  <script src="data/backend-data.js"></script>
+  <script src="data/roadmap-data.js"></script>
+  <!-- Central Application Engine -->
+  <script src="script.js"></script>
+</body>
+</html>
