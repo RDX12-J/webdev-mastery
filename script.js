@@ -9,7 +9,7 @@ const TRACKS_CONFIG = {
     shortName: 'HTML5',
     icon: '📄',
     badge: '122 Tags: Basic to Pro',
-    heroTitle: 'HTML5 Tags: <span>Basic Se Lekar Pro Level</span> Tak',
+    heroTitle: 'HTML5 Tags: <span>Basic to Pro Level</span> Tak',
     heroDesc: 'HTML ke sabhi 122 tags ka complete interactive sangrah. Har tag ka Hinglish explanation, code syntax, copy button, aur live interactive preview.',
     getData: () => window.htmlTagsData || []
   },
@@ -19,7 +19,7 @@ const TRACKS_CONFIG = {
     shortName: 'CSS3',
     icon: '🎨',
     badge: 'Styling, Flexbox, Grid & Modern CSS',
-    heroTitle: 'CSS3 Styling: <span>Noob Se Lekar Pro Level</span> Tak',
+    heroTitle: 'CSS3 Styling: <span>Noob to Pro Level</span> Tak',
     heroDesc: 'CSS ke basic selectors, Box Model, Units se lekar Flexbox, CSS Grid, Transitions, Keyframe Animations, :has() aur Container Queries tak ka complete guide.',
     getData: () => window.cssTopicsData || []
   },
@@ -29,7 +29,7 @@ const TRACKS_CONFIG = {
     shortName: 'JavaScript',
     icon: '⚡',
     badge: 'Core Syntax, DOM, Async & ES6+',
-    heroTitle: 'JavaScript: <span>Beginner Se Lekar Pro Level</span> Tak',
+    heroTitle: 'JavaScript: <span>Beginner to Pro Level</span> Tak',
     heroDesc: 'Variables, Functions, Arrays, Objects, DOM manipulation, Events, Promises, Async/Await, Fetch API, Closures aur Event Loop ka complete interactive guide.',
     getData: () => window.jsTopicsData || []
   },
@@ -39,7 +39,7 @@ const TRACKS_CONFIG = {
     shortName: 'Git & GitHub',
     icon: '🐙',
     badge: 'Version Control, Branching & PRs',
-    heroTitle: 'Git & GitHub: <span>Commands Se Lekar Pro Collaboration</span> Tak',
+    heroTitle: 'Git & GitHub: <span>Commands to Pro Collaboration</span> Tak',
     heroDesc: 'git init, commit, branching, merging, remote push/pull, merge conflicts resolve karna, PR workflow aur git stash ka complete practical guide.',
     getData: () => window.gitTopicsData || []
   },
@@ -49,7 +49,7 @@ const TRACKS_CONFIG = {
     shortName: 'React & Frontend',
     icon: '⚛️',
     badge: 'Vite, Components, Hooks & Tailwind',
-    heroTitle: 'React & Frontend: <span>Component Se Lekar Full App</span> Tak',
+    heroTitle: 'React & Frontend: <span>Component to Full App</span> Tak',
     heroDesc: 'JSX, Components, Props, useState, useEffect, Lists & Keys, Tailwind CSS, Zustand Global Store, aur Next.js SSR concepts ka complete guide.',
     getData: () => window.frontendTopicsData || []
   },
@@ -59,7 +59,7 @@ const TRACKS_CONFIG = {
     shortName: 'Backend & APIs',
     icon: '🛠️',
     badge: 'HTTP, Node.js, Express & DBs',
-    heroTitle: 'Backend & APIs: <span>Client-Server Se Lekar REST APIs</span> Tak',
+    heroTitle: 'Backend & APIs: <span>Client-Server to REST APIs</span> Tak',
     heroDesc: 'HTTP Methods, Status Codes, JSON, Node.js, Express CRUD API, Middleware, CORS, PostgreSQL/MongoDB, JWT Auth aur WebSockets ka complete guide.',
     getData: () => window.backendTopicsData || []
   },
@@ -69,7 +69,7 @@ const TRACKS_CONFIG = {
     shortName: 'Roadmap & Tools',
     icon: '🗺️',
     badge: '6-Month Roadmap & Cloud Hosting',
-    heroTitle: 'Web Dev Roadmap: <span>Step-By-Step Zero Se Job-Ready</span> Tak',
+    heroTitle: 'Web Dev Roadmap: <span>Step-By-Step Zero to Job-Ready</span> Tak',
     heroDesc: 'Month 1 se Month 6 tak ka complete roadmap, VS Code shortcuts, Chrome DevTools mastery, aur 100% free cloud deployment platforms ki list.',
     getData: () => window.roadmapTopicsData || []
   }
