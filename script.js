@@ -80,6 +80,22 @@ let currentTrack = 'html';
 let currentCategory = 'all';
 let currentLevel = 'all';
 let searchQuery = '';
+let activePlaygroundMode = 'html';
+
+const PLAYGROUND_PRESETS = {
+  html: {
+    label: 'HTML',
+    code: `<h1>Hello World</h1>\n<p>Welcome to Web Development</p>\n<button>Click Me</button>`
+  },
+  css: {
+    label: 'CSS',
+    code: `<div class="box">Hello</div>\n<style>\n  body {\n    display: grid;\n    place-items: center;\n    min-height: 100vh;\n    background: linear-gradient(135deg, #0f172a, #1d4ed8);\n    font-family: Arial, sans-serif;\n    margin: 0;\n  }\n\n  .box {\n    width: 220px;\n    height: 100px;\n    display: grid;\n    place-items: center;\n    background: linear-gradient(135deg, #22c55e, #0ea5e9);\n    color: white;\n    border-radius: 18px;\n    font-size: 1.6rem;\n    font-weight: 700;\n    box-shadow: 0 18px 30px rgba(0, 0, 0, 0.2);\n  }\n</style>`
+  },
+  js: {
+    label: 'JavaScript',
+    code: `const name = "Rishabh";\nconsole.log("Hello " + name);\nconsole.log("Website is ready!");`
+  }
+};
 
 // DOM Elements
 const trackNav = document.getElementById('trackNav');
@@ -93,6 +109,11 @@ const resultsCount = document.getElementById('resultsCount');
 const resetBtn = document.getElementById('resetFilters');
 const themeToggleBtn = document.getElementById('themeToggleBtn');
 const backToTopBtn = document.getElementById('backToTopBtn');
+const playgroundEditor = document.getElementById('playgroundEditor');
+const playgroundFrame = document.getElementById('playgroundFrame');
+const playgroundOutput = document.getElementById('playgroundOutput');
+const playgroundError = document.getElementById('playgroundError');
+const playgroundTabs = document.querySelectorAll('.playground-tab');
 
 // Stat Counters
 const totalCountEl = document.getElementById('totalCount');
@@ -245,15 +266,21 @@ function renderCards() {
         <div class="empty-icon">&#128269;</div>
         <h3>Koi topic nahi mila!</h3>
         <p>Aapke search query "<strong>${escapeHtml(query)}</strong>" ke liye koi match nahi mila.</p>
-        <button class="chip-btn" onclick="resetAllFilters()" style="margin-top:1rem;">Reset Filters</button>
+        <button class="chip-btn reset-empty-btn" type="button" style="margin-top:1rem;">Reset Filters</button>
       </div>
     `;
+
+    const emptyReset = document.querySelector('.reset-empty-btn');
+    if (emptyReset) {
+      emptyReset.addEventListener('click', resetAllFilters);
+    }
     return;
   }
 
   tagsGrid.innerHTML = filtered.map(item => {
     const titleText = item.title || item.tag || 'Topic';
     const isTag = Boolean(item.tag);
+    const languageMode = currentTrack === 'html' ? 'html' : currentTrack === 'css' ? 'css' : currentTrack === 'js' ? 'js' : 'html';
 
     const levelLabel = {
       beginner: '🟢 Beginner / Noob',
@@ -299,7 +326,7 @@ function renderCards() {
         <div class="code-container">
           <div class="code-header">
             <span>Code Example</span>
-            <button class="copy-btn" onclick="copyCode(this, \`${escapeJsString(item.code)}\`)">
+            <button class="copy-btn" type="button" data-copy-code="${escapeAttribute(item.code)}">
               <span>&#128203; Copy</span>
             </button>
           </div>
@@ -315,6 +342,12 @@ function renderCards() {
           </div>
         </div>
 
+        <div class="tag-actions">
+          <button class="try-code-btn" type="button" data-playground-mode="${languageMode}" data-code="${escapeAttribute(item.code)}">
+            Try It
+          </button>
+        </div>
+
         <div class="tag-tip ${tipClass}">
           <span class="tip-icon">${tipIcon}</span>
           <span>${escapeHtml(item.tip)}</span>
@@ -322,6 +355,21 @@ function renderCards() {
       </article>
     `;
   }).join('');
+
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => copyCode(btn, btn.dataset.copyCode || ''));
+  });
+
+  document.querySelectorAll('.try-code-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const mode = btn.dataset.playgroundMode || 'html';
+      const code = btn.dataset.code || PLAYGROUND_PRESETS[mode]?.code || '';
+      setPlaygroundTab(mode);
+      playgroundEditor.value = code;
+      runPlayground();
+      document.querySelector('.playground-showcase').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
 }
 
 // Helpers
@@ -338,6 +386,293 @@ function escapeHtml(str) {
 function escapeJsString(str) {
   if (!str) return '';
   return str.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$');
+}
+
+function escapeAttribute(str) {
+  if (!str) return '';
+  return escapeHtml(str).replace(/`/g, '&#96;');
+}
+
+function setPlaygroundTab(mode) {
+  activePlaygroundMode = mode;
+  if (!playgroundTabs.length) return;
+
+  playgroundTabs.forEach(tab => {
+    const isActive = tab.dataset.playgroundMode === mode;
+    tab.classList.toggle('active', isActive);
+    tab.setAttribute('aria-selected', String(isActive));
+  });
+}
+
+function buildPlaygroundDocument(mode, rawCode) {
+  if (mode === 'html') {
+    const html = rawCode || PLAYGROUND_PRESETS.html.code;
+    return `<!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <style>
+          * { box-sizing: border-box; }
+          body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: linear-gradient(135deg, #0f172a, #111827);
+            color: #e2e8f0;
+            font-family: Arial, sans-serif;
+          }
+          button, input, textarea, select { font: inherit; }
+        </style>
+      </head>
+      <body>${html}</body>
+      </html>`;
+  }
+
+  if (mode === 'css') {
+    let source = rawCode || PLAYGROUND_PRESETS.css.code;
+    const styleMatch = source.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
+    const css = styleMatch ? styleMatch[1] : '';
+    const bodyHtml = source.replace(/<style[^>]*>[\s\S]*?<\/style>/i, '').trim() || '<div class="box">Hello</div>';
+    return `<!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <style>
+          * { box-sizing: border-box; }
+          body {
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+            background: linear-gradient(135deg, #020617, #0f172a);
+            color: #e2e8f0;
+            font-family: Arial, sans-serif;
+          }
+          ${css || 'body { display: grid; place-items: center; }'}
+        </style>
+      </head>
+      <body>${bodyHtml}</body>
+      </html>`;
+  }
+
+  const code = (rawCode || PLAYGROUND_PRESETS.js.code).replace(/<\/script>/gi, '<\\/script>');
+  return `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <style>
+        * { box-sizing: border-box; }
+        body {
+          margin: 0;
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: linear-gradient(135deg, #111827, #1e293b);
+          color: #e2e8f0;
+          font-family: Arial, sans-serif;
+          padding: 24px;
+        }
+        .output-box {
+          width: min(100%, 560px);
+          background: rgba(15, 23, 42, 0.9);
+          border: 1px solid rgba(148, 163, 184, 0.25);
+          border-radius: 16px;
+          padding: 18px;
+          box-shadow: 0 18px 30px rgba(0, 0, 0, 0.15);
+          white-space: pre-wrap;
+          line-height: 1.6;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="output-box" id="outputBox">Running JavaScript...</div>
+      <script>
+        const outputBox = document.getElementById('outputBox');
+        const lines = [];
+        const formatValue = (value) => {
+          if (typeof value === 'string') return value;
+          try {
+            return JSON.stringify(value, null, 2);
+          } catch (error) {
+            return String(value);
+          }
+        };
+
+        const capture = (...args) => {
+          const finalText = args.map(formatValue).join(' ');
+          lines.push(finalText);
+          outputBox.textContent = lines.join('\n');
+          window.parent.postMessage({ type: 'playground-output', payload: lines.join('\n') }, '*');
+        };
+
+        const originalConsole = window.console;
+        window.console = {
+          ...originalConsole,
+          log: (...args) => capture(...args),
+          info: (...args) => capture(...args),
+          warn: (...args) => capture('⚠️', ...args),
+          error: (...args) => capture('❌', ...args)
+        };
+
+        try {
+          ${code}
+          if (!lines.length) {
+            outputBox.textContent = 'No output yet. Run the code again to see results.';
+            window.parent.postMessage({ type: 'playground-output', payload: 'No output yet. Run the code again to see results.' }, '*');
+          }
+        } catch (error) {
+          const message = '❌ Error: ' + error.name + ': ' + error.message;
+          outputBox.textContent = message;
+          window.parent.postMessage({ type: 'playground-output', payload: message }, '*');
+        }
+      <\/script>
+    </body>
+    </html>`;
+}
+
+function showPlaygroundError(message) {
+  if (!playgroundError) return;
+  playgroundError.hidden = false;
+  playgroundError.textContent = message;
+}
+
+function clearPlaygroundError() {
+  if (!playgroundError) return;
+  playgroundError.hidden = true;
+  playgroundError.textContent = '';
+}
+
+function runPlayground() {
+  if (!playgroundEditor || !playgroundFrame) return;
+
+  const activeCode = playgroundEditor.value.trim();
+  if (!activeCode) {
+    playgroundFrame.srcdoc = '<!DOCTYPE html><html><body style="margin:0;padding:24px;background:#0f172a;color:#e2e8f0;font-family:Arial,sans-serif;">No code to run yet.</body></html>';
+    playgroundOutput.innerHTML = '<span class="placeholder-text">No output yet. Start by typing some code.</span>';
+    clearPlaygroundError();
+    return;
+  }
+
+  let parsedCode = activeCode;
+  if (activePlaygroundMode === 'css') {
+    if (!activeCode.includes('<style') && !activeCode.includes('{')) {
+      parsedCode = `<div class="box">Hello</div>\n<style>\n  body { ... }\n</style>`;
+    }
+  }
+
+  try {
+    playgroundFrame.srcdoc = buildPlaygroundDocument(activePlaygroundMode, parsedCode);
+    clearPlaygroundError();
+
+    if (activePlaygroundMode === 'js') {
+      playgroundOutput.innerHTML = '<span class="placeholder-text">Running JavaScript...</span>';
+    } else {
+      playgroundOutput.innerHTML = '<span class="placeholder-text">Preview refreshed.</span>';
+    }
+  } catch (error) {
+    showPlaygroundError(`Your code has an error. Check the code and try again. ${error.message}`);
+    playgroundOutput.innerHTML = '<span class="placeholder-text">Preview failed. Reset the example or fix the code.</span>';
+  }
+}
+
+function resetPlayground() {
+  if (!playgroundEditor) return;
+  const preset = PLAYGROUND_PRESETS[activePlaygroundMode] || PLAYGROUND_PRESETS.html;
+  playgroundEditor.value = preset.code;
+  runPlayground();
+}
+
+function clearPlayground() {
+  if (!playgroundEditor) return;
+  playgroundEditor.value = '';
+  playgroundFrame.srcdoc = '<!DOCTYPE html><html><body style="margin:0;padding:24px;background:#0f172a;color:#e2e8f0;font-family:Arial,sans-serif;">Output cleared.</body></html>';
+  playgroundOutput.innerHTML = '<span class="placeholder-text">Output cleared.</span>';
+  clearPlaygroundError();
+}
+
+function copyPlayground() {
+  if (!playgroundEditor) return;
+  const value = playgroundEditor.value;
+  const safeCopy = async () => {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(value);
+      } else {
+        const helper = document.createElement('textarea');
+        helper.value = value;
+        document.body.appendChild(helper);
+        helper.select();
+        document.execCommand('copy');
+        helper.remove();
+      }
+      showToast('Playground code copied!');
+    } catch (error) {
+      showToast('Copy failed. Please copy manually.');
+    }
+  };
+  safeCopy();
+}
+
+async function toggleFullscreen() {
+  const shell = document.querySelector('.playground-editor-shell');
+  if (!shell) return;
+  if (!document.fullscreenElement) {
+    await shell.requestFullscreen().catch(() => showToast('Fullscreen is unavailable in this browser.'));
+  } else {
+    await document.exitFullscreen().catch(() => undefined);
+  }
+}
+
+function setupPlayground() {
+  if (!playgroundEditor || !playgroundFrame) return;
+
+  setPlaygroundTab(activePlaygroundMode);
+  playgroundEditor.value = PLAYGROUND_PRESETS[activePlaygroundMode].code;
+  runPlayground();
+
+  playgroundTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const mode = tab.dataset.playgroundMode;
+      setPlaygroundTab(mode);
+      activePlaygroundMode = mode;
+      playgroundEditor.value = PLAYGROUND_PRESETS[mode].code;
+      runPlayground();
+    });
+  });
+
+  document.querySelectorAll('[data-playground-action]').forEach(button => {
+    button.addEventListener('click', () => {
+      const action = button.dataset.playgroundAction;
+      if (action === 'run') runPlayground();
+      if (action === 'reset') resetPlayground();
+      if (action === 'clear') clearPlayground();
+      if (action === 'copy') copyPlayground();
+      if (action === 'fullscreen') toggleFullscreen();
+    });
+  });
+
+  playgroundEditor.addEventListener('input', () => {
+    clearPlaygroundError();
+  });
+
+  window.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'playground-output') {
+      const payload = String(event.data.payload || '').trim();
+      if (payload) {
+        playgroundOutput.innerHTML = `<pre>${escapeHtml(payload)}</pre>`;
+      } else {
+        playgroundOutput.innerHTML = '<span class="placeholder-text">No output yet. Run the code to see results.</span>';
+      }
+    }
+  });
 }
 
 // Code Syntax Highlighter
@@ -366,19 +701,34 @@ function highlightCode(code, track) {
 }
 
 // Clipboard Copy
-window.copyCode = function(button, code) {
-  navigator.clipboard.writeText(code).then(() => {
-    const originalText = button.innerHTML;
-    button.innerHTML = '<span>&#10003; Copied!</span>';
-    button.classList.add('copied');
-    showToast('Code copied to clipboard!');
-    setTimeout(() => {
-      button.innerHTML = originalText;
-      button.classList.remove('copied');
-    }, 2000);
-  }).catch(() => {
-    showToast('Failed to copy code');
-  });
+window.copyCode = function (button, code) {
+  const copyText = async () => {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(code);
+      } else {
+        const helper = document.createElement('textarea');
+        helper.value = code;
+        document.body.appendChild(helper);
+        helper.select();
+        document.execCommand('copy');
+        helper.remove();
+      }
+
+      const originalText = button.innerHTML;
+      button.innerHTML = '<span>&#10003; Copied!</span>';
+      button.classList.add('copied');
+      showToast('Code copied to clipboard!');
+      setTimeout(() => {
+        button.innerHTML = originalText;
+        button.classList.remove('copied');
+      }, 2000);
+    } catch (error) {
+      showToast('Failed to copy code');
+    }
+  };
+
+  copyText();
 };
 
 // Toast Notification
@@ -398,7 +748,7 @@ function showToast(message) {
 }
 
 // Reset All Filters
-window.resetAllFilters = function() {
+window.resetAllFilters = function () {
   currentCategory = 'all';
   currentLevel = 'all';
   searchQuery = '';
@@ -471,6 +821,19 @@ function setupEvents() {
     });
   }
 
+  const printBtn = document.querySelector('[data-action="print"]');
+  if (printBtn) {
+    printBtn.addEventListener('click', () => window.print());
+  }
+
+  const scrollTopLink = document.querySelector('[data-action="scroll-top"]');
+  if (scrollTopLink) {
+    scrollTopLink.addEventListener('click', (event) => {
+      event.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
   // Back to Top button
   if (backToTopBtn) {
     window.addEventListener('scroll', () => {
@@ -493,6 +856,8 @@ function setupEvents() {
       switchTrack(hash);
     }
   });
+
+  setupPlayground();
 }
 
 function updateThemeBtnText(theme) {

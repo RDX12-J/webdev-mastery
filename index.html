@@ -1,15 +1,23 @@
 <!DOCTYPE html>
 <html lang="hi" data-theme="dark" data-track="html">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; script-src 'self' 'unsafe-inline'; connect-src 'self' https:; object-src 'none'; base-uri 'self'; frame-src 'self' blob:; form-action 'none'; upgrade-insecure-requests">
+  <meta name="theme-color" content="#0b0f19">
   <title>Full-Stack Web Development Learning Portal: Basic Se Pro Level Tak</title>
-  <meta name="description" content="Complete Web Development Learning Hub: HTML, CSS, JavaScript, Git & GitHub, React & Frontend, Backend & APIs aur Roadmap - sabhi parts alag aur organized from noob to pro.">
+  <meta name="description"
+    content="Complete Web Development Learning Hub: HTML, CSS, JavaScript, Git & GitHub, React & Frontend, Backend & APIs aur Roadmap - sabhi parts alag aur organized from noob to pro.">
   <link rel="stylesheet" href="styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
 </head>
+
 <body>
 
   <!-- Sticky Header with Master Track Navigation -->
@@ -21,10 +29,10 @@
           <h1>Web Dev Mastery Hub</h1>
         </div>
         <div class="header-actions">
-          <button class="action-btn" onclick="window.print()" title="Print Current Track Cheatsheet">
+          <button class="action-btn" data-action="print" title="Print Current Track Cheatsheet">
             <span>&#128424;</span> Print / PDF
           </button>
-          <button id="themeToggleBtn" class="theme-toggle-btn" title="Toggle Theme">
+          <button id="themeToggleBtn" class="theme-toggle-btn" data-action="toggle-theme" title="Toggle Theme">
             <span>&#9728;&#65039;</span> Light Mode
           </button>
         </div>
@@ -44,7 +52,8 @@
         <span>&#9889;</span> 122 Tags: Basic to Pro
       </div>
       <h2 id="heroTitle">HTML5 Tags: <span>Basic Se Lekar Pro Level</span> Tak</h2>
-      <p id="heroDesc">HTML ke sabhi 122 tags ka complete interactive sangrah. Har tag ka Hinglish explanation, code syntax, copy button, aur live interactive preview.</p>
+      <p id="heroDesc">HTML ke sabhi 122 tags ka complete interactive sangrah. Har tag ka Hinglish explanation, code
+        syntax, copy button, aur live interactive preview.</p>
 
       <!-- Stats Bar -->
       <div class="stats-strip">
@@ -74,19 +83,64 @@
 
   <!-- Main Content & Filters -->
   <main class="container">
-    
+
+    <section class="playground-showcase" aria-label="Interactive playground lab">
+      <div class="playground-header">
+        <div>
+          <p class="eyebrow">Interactive lab</p>
+          <h3>Code Playground Studio</h3>
+        </div>
+        <div class="playground-status">
+          <span class="status-dot"></span>
+          Client-side only • Safe sandbox
+        </div>
+      </div>
+
+      <div class="playground-tabs" role="tablist" aria-label="Playground language tabs">
+        <button class="playground-tab active" type="button" data-playground-mode="html" role="tab"
+          aria-selected="true">HTML</button>
+        <button class="playground-tab" type="button" data-playground-mode="css" role="tab"
+          aria-selected="false">CSS</button>
+        <button class="playground-tab" type="button" data-playground-mode="js" role="tab"
+          aria-selected="false">JavaScript</button>
+      </div>
+
+      <div class="playground-panel">
+        <div class="playground-editor-shell">
+          <div class="playground-toolbar">
+            <span class="toolbar-label">Editor</span>
+            <div class="playground-actions">
+              <button class="mini-btn run-btn" type="button" data-playground-action="run">▶ Run</button>
+              <button class="mini-btn" type="button" data-playground-action="reset">Reset</button>
+              <button class="mini-btn" type="button" data-playground-action="clear">Clear</button>
+              <button class="mini-btn" type="button" data-playground-action="copy">Copy</button>
+              <button class="mini-btn" type="button" data-playground-action="fullscreen">Fullscreen</button>
+            </div>
+          </div>
+          <textarea id="playgroundEditor" aria-label="Code editor" spellcheck="false"></textarea>
+          <div id="playgroundError" class="playground-error" aria-live="polite" hidden></div>
+        </div>
+
+        <div class="playground-preview-shell">
+          <div class="preview-toolbar">
+            <span>Live Preview</span>
+          </div>
+          <iframe id="playgroundFrame" title="Code preview" sandbox="allow-scripts allow-modals"></iframe>
+          <div id="playgroundOutput" class="playground-output" aria-live="polite">
+            <span class="placeholder-text">Your HTML/CSS/JS output will appear here.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Controls Bar -->
     <section class="controls-bar" aria-label="Filters and Search">
       <!-- Real-time Search -->
       <div class="search-box-wrapper">
         <span class="search-icon">&#128269;</span>
-        <input 
-          type="text" 
-          id="searchInput" 
-          class="search-input" 
+        <input type="text" id="searchInput" class="search-input"
           placeholder="Search this track (e.g. 'flexbox', 'promise', 'branch', 'hooks', 'jwt', 'status')..."
-          autocomplete="off"
-        >
+          autocomplete="off">
         <span class="search-shortcut" title="Press '/' to search">/</span>
       </div>
 
@@ -138,9 +192,10 @@
   <!-- Footer -->
   <footer>
     <div class="container">
-      <p><strong>Full-Stack Web Development Mastery Hub</strong> &bull; Complete all-in-one learning portal from starting/noob to pro level.</p>
+      <p><strong>Full-Stack Web Development Mastery Hub</strong> &bull; Complete all-in-one learning portal from
+        starting/noob to pro level.</p>
       <div class="footer-links">
-        <a href="#top" onclick="window.scrollTo({top:0, behavior:'smooth'}); return false;">Scroll to Top</a>
+        <a href="#top" data-action="scroll-top">Scroll to Top</a>
         <a href="https://developer.mozilla.org/" target="_blank" rel="noopener">MDN Web Docs</a>
         <a href="https://react.dev/" target="_blank" rel="noopener">React Docs</a>
         <a href="https://nodejs.org/" target="_blank" rel="noopener">Node.js Docs</a>
@@ -159,4 +214,5 @@
   <!-- Central Application Engine -->
   <script src="script.js"></script>
 </body>
+
 </html>
